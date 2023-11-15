@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.generator.config.DataSourceConfig.Builder;
 import com.baomidou.mybatisplus.generator.query.DefaultQuery;
 import lombok.SneakyThrows;
 import org.apache.ibatis.jdbc.ScriptRunner;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -38,6 +39,17 @@ public class CodeGeneratorTest {
         for (File sqlFile : sqlFiles) {
             scriptRunner.runScript(new InputStreamReader(new FileInputStream(sqlFile)));
         }
+        List<String> schemas = getStrings(connection);
+
+        for (String schema : schemas) {
+            gen("com.katana.demo", schema,
+                    "./src/main/java");
+        }
+
+    }
+
+    @NotNull
+    private static List<String> getStrings(Connection connection) throws SQLException {
         DatabaseMetaData databaseMetaData = connection.getMetaData();
         List<String> schemas = new ArrayList<>();
         try (ResultSet resultSet = databaseMetaData.getSchemas()) {
@@ -51,12 +63,7 @@ public class CodeGeneratorTest {
         } catch (SQLException e) {
             throw new RuntimeException("读取数据库表信息出现错误", e);
         }
-
-        for (String schema : schemas) {
-            gen("com.katana.demo", schema,
-                    "./src/main/java");
-        }
-
+        return schemas;
     }
 
     /**
