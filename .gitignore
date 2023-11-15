@@ -8,3 +8,4 @@
 /dataSources.local.xml
 /mybatis-gen4sql.iml
 /.idea/
+/target/
